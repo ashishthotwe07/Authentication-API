@@ -83,6 +83,8 @@ export const UserSignUp = async (req, res) => {
       }
     );
 
+    const verificationLink = `http://localhost:8000/api/users/verify/${verificationToken}`;
+
     const htmlContent = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
         <h2 style="text-align: center; color: #333;">Welcome to Our Platform!</h2>
