@@ -278,3 +278,55 @@ export const verifyEmail = async (req, res) => {
     });
   }
 };
+
+export const UserSignOut = async (req, res) => {
+  try {
+    // Clear the token cookie
+    res.clearCookie("token");
+    return res.status(200).json({
+      success: true,
+      message: "User signed out successfully",
+    });
+  } catch (error) {
+    console.error("Error signing out user:", error);
+    return res.status(500).json({
+      success: false,
+      message: "An error occurred while signing out user",
+    });
+  }
+};
+
+export const deleteUser = async (req, res) => {
+  try {
+    const userId = req.userId;
+
+    // Find the user by ID and delete
+    const deletedUser = await User.findByIdAndDelete(userId);
+    if (!deletedUser) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    // Clear the token cookie after deleting user
+    res.clearCookie("token");
+
+    return res.status(200).json({
+      success: true,
+      message: "User deleted successfully",
+      deletedUser: {
+        _id: deletedUser._id,
+        name: deletedUser.name,
+        email: deletedUser.email,
+        avatar: deletedUser.avatar,
+      },
+    });
+  } catch (error) {
+    console.error("Error deleting user:", error);
+    return res.status(500).json({
+      success: false,
+      message: "An error occurred while deleting user",
+    });
+  }
+};
