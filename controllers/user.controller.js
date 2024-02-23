@@ -1,13 +1,12 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import User from "../models/user.model.js";
-import nodemailer from "nodemailer";
 import transporter from "../config/nodemailer.js";
 import dotenv from "dotenv";
 dotenv.config();
 
 // Function to send verification email
-const sendVerificationEmail = async (email, verificationToken) => {
+const sendVerificationEmailFunc = async (email, verificationToken) => {
   try {
     const htmlContent = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
@@ -30,7 +29,6 @@ const sendVerificationEmail = async (email, verificationToken) => {
 
     // Send email
     await transporter.sendMail(mailOptions);
-    console.log("Verification email sent successfully.");
   } catch (error) {
     console.error("Error sending verification email:", error);
     throw error; // Throw error to handle it in the caller function
@@ -99,7 +97,7 @@ export const UserSignUp = async (req, res) => {
     `;
 
     // Send verification email
-    await sendVerificationEmail(email, verificationToken);
+    await sendVerificationEmailFunc(email, verificationToken);
 
     // Return a success response
     return res.status(201).json({
@@ -139,6 +137,25 @@ export const UserSignIn = async (req, res) => {
       return res.status(401).json({
         success: false,
         message: "Invalid email or password",
+      });
+    }
+
+    // Check if the user's email is verified
+    if (!user.emailVerified) {
+      // Send verification email
+      const verificationToken = jwt.sign(
+        { userId: user._id },
+        process.env.JWT_SECRET,
+        {
+          expiresIn: "1d", // Token expires in 1 day
+        }
+      );
+      await sendVerificationEmailFunc(email, verificationToken);
+
+      return res.status(401).json({
+        success: false,
+        message:
+          "Please verify your email address to proceed. A verification email has been sent to your email address.",
       });
     }
 
@@ -232,11 +249,6 @@ export const updateUser = async (req, res) => {
       message: "An error occurred while updating user",
     });
   }
-};
-
-export const test = async (req, res) => {
-  res.send("sucess");
-  console.log("helllo bhai ", req.userId);
 };
 
 export const verifyEmail = async (req, res) => {
