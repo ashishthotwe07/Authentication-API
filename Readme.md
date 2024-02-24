@@ -85,6 +85,6 @@ This project is licensed under the [MIT License](LICENSE).
 
 ## Contact Information
 
-For any inquiries or support, please contact [Your Name](mailto:ashishthotwe20@example.com).
+For any inquiries or support, please contact [Ashish Thotwe](mailto:ashishthotwe20@example.com).
 
 ---
