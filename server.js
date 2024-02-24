@@ -1,6 +1,6 @@
 // Import required modules
 import dotenv from "dotenv"; // Load environment variables from .env file
-import express from "express"; // Fast, unopinionated, minimalist web framework for Node.js
+import express from "express"; 
 import cookieParser from "cookie-parser"; // Parse Cookie header and populate req.cookies
 import connectDB from "./config/db.config.js"; // Import function to connect to the database
 import userRouter from "./routes/user.routes.js"; // Import router for user-related routes
